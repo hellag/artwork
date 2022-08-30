@@ -11,8 +11,6 @@ export class HomeComponent implements OnInit {
   public paginationData = {}
   public totalItems = ''
 
-  private url = "http://localhost:3000/getart"
-
   public currentPage = 1;
 
   constructor() { }
@@ -21,19 +19,24 @@ export class HomeComponent implements OnInit {
     this.getArtwork();
   }
 
+  /**
+   * Main data function. Retrieves artwork data.
+   */
   getArtwork() {
+    let url = "http://localhost:3000/getart/"
 
-    fetch(this.url, {
+    url = url + this.currentPage.toString();
+
+    fetch(url, {
       method: 'GET',
 
     })
       .then(response => response.json())
       .then(data => {
-        // console.log(data)
 
         this.paginationData = data.pagination;
         this.totalItems = data.pagination.total;
-        console.log(this.paginationData);
+
         this.artworks = data.mainData;
       })
       .catch(err => {
@@ -42,10 +45,14 @@ export class HomeComponent implements OnInit {
   }
 
 
+  /**
+   * Paginator. Changes the page number and recalls the api for the new results
+   * @param ev
+   */
   pageChanged(ev: any ){
-    console.log("changed");
+    this.currentPage = ev;
 
-    return 2;
+    this.getArtwork()
   }
 
 }

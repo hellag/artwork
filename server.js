@@ -4,7 +4,8 @@ const axios = require('axios');
 
 const app = express();
 const port = 3000;
-const url = "https://api.artic.edu/api/v1/artworks";
+
+
 
 
 app.use(cors())
@@ -16,11 +17,14 @@ app.get('/', (req, res) => {
 /**
  * Return api response
  */
-app.get('/getart', async (req, res) => {
+app.get('/getart/:page', async (req, res) => {
 
-    let artworkResponse = await getArtworkObject();
+  let pageNumber = req.params.page;
+  console.log(req.params.page);
 
-    res.json(artworkResponse);
+  let artworkResponse = await getArtworkObject(pageNumber);
+
+  res.json(artworkResponse);
 
 });
 
@@ -28,28 +32,37 @@ app.get('/getart', async (req, res) => {
 /**
  * Get Artwork data from api
  */
-function getArtworkObject() {
+function getArtworkObject(pageNumber) {
+  let url = "https://api.artic.edu/api/v1/artworks";
 
-    return new Promise((resolve,reject) => {
+  console.log("page number: " + pageNumber);
 
-        axios.get(url)
-            .then(response => {
+  if(pageNumber !== '1'){
+    url = url + '?page=' + pageNumber;
+  }else {
+    url = "https://api.artic.edu/api/v1/artworks";
+  }
 
-              let mandatoryData = {
-                "pagination": response.data.pagination,
-                "mainData": response.data.data
-              }
+  return new Promise((resolve,reject) => {
 
-                resolve(mandatoryData)
-            })
-            .catch(error => {
-                console.log(error);
-                reject("error getting artwork data")
-            });
+      axios.get(url)
+          .then(response => {
 
-    }).then(data => {
-        return data;
-    })
+            let mandatoryData = {
+              "pagination": response.data.pagination,
+              "mainData": response.data.data
+            }
+
+              resolve(mandatoryData)
+          })
+          .catch(error => {
+              console.log(error);
+              reject("error getting artwork data")
+          });
+
+  }).then(data => {
+      return data;
+  })
 
 }
 
