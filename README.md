@@ -8,4 +8,4 @@
 - Download project
 - Run npm install
 - Run node server.js for the backend
-- Run ng server --open to another terminal
+- Run ng serve --open to another terminal
